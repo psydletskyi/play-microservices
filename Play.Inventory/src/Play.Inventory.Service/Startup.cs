@@ -38,7 +38,7 @@ namespace Play.Inventory.Service
             services.AddMongo()
                     .AddMongoRepository<InventoryItem>("inventoryitems")
                     .AddMongoRepository<CatalogItem>("catalogitems")
-                    .AddMassTransitWithRabbitMQ();
+                    .AddMassTransitWithRabbitMq();
 
             AddCatalogClient(services);
 
