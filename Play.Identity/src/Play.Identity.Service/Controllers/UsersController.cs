@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MassTransit;
+// using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,16 +15,16 @@ namespace Play.Identity.Service.Controllers
 {
     [ApiController]
     [Route("users")]
-    [Authorize(Policy = LocalApi.PolicyName, Roles = Roles.Admin)]
+    // [Authorize(Policy = LocalApi.PolicyName, Roles = Roles.Admin)]
     public class UsersController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IPublishEndpoint publishEndpoint;
+        // private readonly IPublishEndpoint publishEndpoint;
 
-        public UsersController(UserManager<ApplicationUser> userManager, IPublishEndpoint publishEndpoint)
+        public UsersController(UserManager<ApplicationUser> userManager)
         {
             this.userManager = userManager;
-            this.publishEndpoint = publishEndpoint;
+            // this.publishEndpoint = publishEndpoint;
         }
 
         [HttpGet]
@@ -68,7 +68,7 @@ namespace Play.Identity.Service.Controllers
 
             await userManager.UpdateAsync(user);
 
-            await publishEndpoint.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
+            // await publishEndpoint.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
 
             return NoContent();
         }
@@ -86,7 +86,7 @@ namespace Play.Identity.Service.Controllers
 
             await userManager.DeleteAsync(user);
 
-            await publishEndpoint.Publish(new UserUpdated(user.Id, user.Email, 0));
+            // await publishEndpoint.Publish(new UserUpdated(user.Id, user.Email, 0));
 
             return NoContent();
         }
