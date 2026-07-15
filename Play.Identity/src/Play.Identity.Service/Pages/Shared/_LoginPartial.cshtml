@@ -19,18 +19,20 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" 
-            id="register" 
-            asp-area="Identity" 
+            <a class="nav-link text-dark"
+            id="register"
+            asp-area="Identity"
             asp-page="/Account/Register"
-            asp-route-returnUrl="@Model.ReturnUrl">Register</a>
+            @* @Model.ReturnUrl *@
+            asp-route-returnUrl="@Url.Content("~/")">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" 
-            id="login" 
-            asp-area="Identity" 
+            <a class="nav-link text-dark"
+            id="login"
+            asp-area="Identity"
             asp-page="/Account/Login"
-            asp-route-returnUrl="@Model.ReturnUrl">Login</a>
+            @* @Model.ReturnUrl *@
+            asp-route-returnUrl="@Url.Content("~/")">Login</a>
         </li>
     }
 </ul>

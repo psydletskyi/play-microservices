@@ -59,7 +59,8 @@ namespace Play.Identity.Service
             //     retryConfigurator.Ignore(typeof(InsufficientFundsException));
             // });
 
-            services.AddIdentityServer(options =>
+           
+             services.AddIdentityServer(options =>
             {
                 options.Events.RaiseSuccessEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -67,7 +68,7 @@ namespace Play.Identity.Service
             })
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddInMemoryApiScopes(identityServerSettings.ApiScopes)
-                .AddInMemoryApiResources(identityServerSettings.ApiResources)
+                //.AddInMemoryApiResources(identityServerSettings.ApiResources)
                 .AddInMemoryClients(identityServerSettings.Clients)
                 .AddInMemoryIdentityResources(identityServerSettings.IdentityResources);
 
