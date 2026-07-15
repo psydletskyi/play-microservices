@@ -22,30 +22,35 @@ namespace Play.Identity.Service.HostedServices
             settings = identityOptions.Value;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            using var scope = serviceScopeFactory.CreateScope();
-
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-            await CreateRoleIfNotExistsAsync(Roles.Admin, roleManager);
-            await CreateRoleIfNotExistsAsync(Roles.Player, roleManager);
-
-            var adminUser = await userManager.FindByEmailAsync(settings.AdminUserEmail);
-
-            if (adminUser == null)
-            {
-                adminUser = new ApplicationUser
-                {
-                    UserName = settings.AdminUserEmail,
-                    Email = settings.AdminUserEmail
-                };
-
-                await userManager.CreateAsync(adminUser, settings.AdminUserPassword);
-                await userManager.AddToRoleAsync(adminUser, Roles.Admin);
-            }
+            // Identity seeding is disabled for the initial tutorial run.
+            return Task.CompletedTask;
         }
+        //  public async Task StartAsync(CancellationToken cancellationToken)
+        // {
+        //     using var scope = serviceScopeFactory.CreateScope();
+
+        //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+        //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        //     await CreateRoleIfNotExistsAsync(Roles.Admin, roleManager);
+        //     await CreateRoleIfNotExistsAsync(Roles.Player, roleManager);
+
+        //     var adminUser = await userManager.FindByEmailAsync(settings.AdminUserEmail);
+
+        //     if (adminUser == null)
+        //     {
+        //         adminUser = new ApplicationUser
+        //         {
+        //             UserName = settings.AdminUserEmail,
+        //             Email = settings.AdminUserEmail
+        //         };
+
+        //         await userManager.CreateAsync(adminUser, settings.AdminUserPassword);
+        //         await userManager.AddToRoleAsync(adminUser, Roles.Admin);
+        //     }
+        // }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 

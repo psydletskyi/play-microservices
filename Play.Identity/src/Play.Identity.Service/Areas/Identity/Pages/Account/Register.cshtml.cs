@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using MassTransit;
+// using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,7 +32,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IdentitySettings identitySettings;
-        private readonly IPublishEndpoint publisEndpoint;
+        // private readonly IPublishEndpoint publisEndpoint;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -40,8 +40,9 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IOptions<IdentitySettings> identityOptions,
-            IPublishEndpoint publisEndpoint)
+            IOptions<IdentitySettings> identityOptions
+            // , IPublishEndpoint publisEndpoint
+            )
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -50,7 +51,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             this.identitySettings = identityOptions.Value;
-            this.publisEndpoint = publisEndpoint;
+            // this.publisEndpoint = publisEndpoint;
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace Play.Identity.Service.Areas.Identity.Pages.Account
 
                     var userId = await _userManager.GetUserIdAsync(user);
 
-                    await publisEndpoint.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
+                    // await publisEndpoint.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

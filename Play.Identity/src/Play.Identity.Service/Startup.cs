@@ -52,12 +52,12 @@ namespace Play.Identity.Service
                     serviceSettings.ServiceName
                 );
 
-            services.AddMassTransitWithRabbitMq(retryConfigurator =>
-            {
-                retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
-                retryConfigurator.Ignore(typeof(UnknownUserException));
-                retryConfigurator.Ignore(typeof(InsufficientFundsException));
-            });
+            // services.AddMassTransitWithRabbitMq(retryConfigurator =>
+            // {
+            //     retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+            //     retryConfigurator.Ignore(typeof(UnknownUserException));
+            //     retryConfigurator.Ignore(typeof(InsufficientFundsException));
+            // });
 
             services.AddIdentityServer(options =>
             {
@@ -74,7 +74,7 @@ namespace Play.Identity.Service
             services.AddLocalApiAuthentication();
 
             services.AddControllers();
-            services.AddHostedService<IdentitySeedHostedService>();
+            // services.AddHostedService<IdentitySeedHostedService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Identity.Service", Version = "v1" });
@@ -98,7 +98,8 @@ namespace Play.Identity.Service
                 });
             }
 
-            app.UseHttpsRedirection();
+            // Disable HTTPS redirection for the local tutorial run so the pages are reachable over HTTP.
+            // app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
