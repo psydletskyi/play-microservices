@@ -42,4 +42,4 @@ Desktop.ini
 .DS_Store
 
 # Identity service generated keys
-src/Play.Identity.Service/keys/
+Play.Identity/src/Play.Identity.Service/keys/
