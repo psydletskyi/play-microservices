@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +14,9 @@ namespace Play.Inventory.Service.Controllers
 {
     [ApiController]
     [Route("items")]
-    [Authorize]
     public class ItemsController : ControllerBase
     {
-        // private const string AdminRole = "Admin";
+        private const string AdminRole = "Admin";
 
         private readonly IRepository<InventoryItem> inventoryItemsRepository;
         private readonly IRepository<CatalogItem> catalogItemsRepository;
@@ -29,7 +30,7 @@ namespace Play.Inventory.Service.Controllers
          }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<InventoryItemDto>>> GetAsync(Guid userId)
         {
            if (userId == Guid.Empty)
@@ -37,15 +38,15 @@ namespace Play.Inventory.Service.Controllers
                return BadRequest();
            }
 
-        //    var currentUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+           var currentUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
-        //    if (Guid.Parse(currentUserId) != userId)
-        //    {
-        //        if (!User.IsInRole(AdminRole))
-        //        {
-        //            return Forbid();
-        //        }
-        //    }
+           if (Guid.Parse(currentUserId) != userId)
+           {
+               if (!User.IsInRole(AdminRole))
+               {
+                   return Forbid();
+               }
+           }
 
            var inventoryItemEntities = await inventoryItemsRepository.GetAllAsync(item => item.UserId == userId);
            var itemIds = inventoryItemEntities.Select(item => item.CatalogItemId);
@@ -60,7 +61,7 @@ namespace Play.Inventory.Service.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = AdminRole)]
+        [Authorize(Roles = AdminRole)]
         public async Task<ActionResult> PostAsync(GrantItemsDto grantItemsDto)
         {
            var inventoryItem = await inventoryItemsRepository.GetAsync(

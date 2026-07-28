@@ -76,7 +76,7 @@ namespace Play.Identity.Service
             services.AddLocalApiAuthentication();
 
             services.AddControllers();
-            // services.AddHostedService<IdentitySeedHostedService>();
+            services.AddHostedService<IdentitySeedHostedService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Play.Identity.Service", Version = "v1" });
