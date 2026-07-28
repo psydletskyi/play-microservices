@@ -71,6 +71,7 @@ namespace Play.Identity.Service
                 .AddInMemoryApiResources(identityServerSettings.ApiResources)
                 .AddInMemoryClients(identityServerSettings.Clients)
                 .AddInMemoryIdentityResources(identityServerSettings.IdentityResources);
+                //.AddDeveloperSigningCredential();
 
             services.AddLocalApiAuthentication();
 
