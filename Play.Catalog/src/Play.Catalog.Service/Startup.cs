@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Play.Catalog.Service.Entities;
 using Play.Common.Settings;
@@ -27,6 +28,13 @@ namespace Play.Catalog.Service
             services.AddMongo()
                 .AddMongoRepository<Item>("items")
                 .AddMassTransitWithRabbitMq();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = "https://localhost:5003";
+                    options.Audience = serviceSettings.ServiceName;
+                });
 
             services.AddControllers(options => {
                 options.SuppressAsyncSuffixInActionNames = false;
@@ -58,6 +66,7 @@ namespace Play.Catalog.Service
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
