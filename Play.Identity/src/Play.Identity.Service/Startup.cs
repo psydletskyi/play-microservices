@@ -52,14 +52,13 @@ namespace Play.Identity.Service
                     serviceSettings.ServiceName
                 );
 
-            // services.AddMassTransitWithRabbitMq(retryConfigurator =>
-            // {
-            //     retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
-            //     retryConfigurator.Ignore(typeof(UnknownUserException));
-            //     retryConfigurator.Ignore(typeof(InsufficientFundsException));
-            // });
+            services.AddMassTransitWithRabbitMq(retryConfigurator =>
+            {
+                retryConfigurator.Interval(3, TimeSpan.FromSeconds(5));
+                retryConfigurator.Ignore(typeof(UnknownUserException));
+                retryConfigurator.Ignore(typeof(InsufficientFundsException));
+            });
 
-           
              services.AddIdentityServer(options =>
             {
                 options.Events.RaiseSuccessEvents = true;

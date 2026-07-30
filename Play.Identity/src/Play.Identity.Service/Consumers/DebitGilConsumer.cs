@@ -27,11 +27,11 @@ namespace Play.Identity.Service.Consumers
                 throw new UnknownUserException(message.UserId);
             }
 
-            if (user.MessageIds.Contains(context.MessageId.Value))
-            {
-                await context.Publish(new GilDebited(message.CorrelationId));
-                return;
-            }
+            // if (user.MessageIds.Contains(context.MessageId.Value))
+            // {
+            //     await context.Publish(new GilDebited(message.CorrelationId));
+            //     return;
+            // }
 
             user.Gil -= message.Gil;
 
@@ -40,14 +40,14 @@ namespace Play.Identity.Service.Consumers
                 throw new InsufficientFundsException(message.UserId, message.Gil);
             }
 
-            user.MessageIds.Add(context.MessageId.Value);
+            // user.MessageIds.Add(context.MessageId.Value);
 
             await userManager.UpdateAsync(user);
+            // var gilDebitedTask = 
+            await context.Publish(new GilDebited(message.CorrelationId));
+            // var userUpdatedTask = context.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
 
-            var gilDebitedTask = context.Publish(new GilDebited(message.CorrelationId));
-            var userUpdatedTask = context.Publish(new UserUpdated(user.Id, user.Email, user.Gil));
-
-            await Task.WhenAll(userUpdatedTask, gilDebitedTask);
+            // await Task.WhenAll(userUpdatedTask, gilDebitedTask);
         }
     }
 }
