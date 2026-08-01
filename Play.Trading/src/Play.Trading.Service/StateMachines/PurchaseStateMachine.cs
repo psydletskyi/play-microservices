@@ -15,7 +15,7 @@ namespace Play.Trading.Service.StateMachines
         public State Faulted { get; }
 
         public Event<PurchaseRequested> PurchaseRequested { get; }
-        // public Event<GetPurchaseState> GetPurchaseState { get; }
+        public Event<GetPurchaseState> GetPurchaseState { get; }
         // public Event<InventoryItemsGranted> InventoryItemsGranted { get; }
         // public Event<GilDebited> GilDebited { get; }
         // public Event<Fault<GrantItems>> GrantItemsFaulted { get; }
@@ -26,7 +26,7 @@ namespace Play.Trading.Service.StateMachines
             InstanceState(state => state.CurrentState);
             ConfigureEvents();
             ConfigureInitialState();
-            // ConfigureAny();
+            ConfigureAny();
             // ConfigureAccepted();
             // ConfigureItemsGranted();
             // ConfigureFaulted();
@@ -37,7 +37,7 @@ namespace Play.Trading.Service.StateMachines
         private void ConfigureEvents()
         {
             Event(() => PurchaseRequested);
-            // Event(() => GetPurchaseState);
+            Event(() => GetPurchaseState);
             // Event(() => InventoryItemsGranted);
             // Event(() => GilDebited);
             // Event(() => GrantItemsFaulted, x => x.CorrelateById(
@@ -140,13 +140,13 @@ namespace Play.Trading.Service.StateMachines
         //     );
         // }
 
-        // private void ConfigureAny()
-        // {
-        //     DuringAny(
-        //         When(GetPurchaseState)
-        //             .Respond(x => x.Instance)
-        //     );
-        // }
+        private void ConfigureAny()
+        {
+            DuringAny(
+                When(GetPurchaseState)
+                    .Respond(x => x.Instance)
+            );
+        }
 
         // private void ConfigureFaulted()
         // {

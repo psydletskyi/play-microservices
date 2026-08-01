@@ -10,15 +10,15 @@ namespace Play.Trading.Service.Dtos
         //[Required] Guid? IdempotencyId
     );
 
-    // public record PurchaseDto(
-    //     Guid UserId,
-    //     Guid ItemId,
-    //     decimal? PurchaseTotal,
-    //     int Quantity,
-    //     string State,
-    //     string Reason,
-    //     DateTimeOffset Received,
-    //     DateTimeOffset LastUpdated);  
+    public record PurchaseDto(
+        Guid UserId,
+        Guid ItemId,
+        decimal? PurchaseTotal,
+        int Quantity,
+        string State,
+        string Reason,
+        DateTimeOffset Received,
+        DateTimeOffset LastUpdated);  
 
     // public record StoreItemDto(
     //     Guid Id,

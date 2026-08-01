@@ -16,36 +16,36 @@ namespace Play.Trading.Service.Controllers
     public class PurchaseController : ControllerBase
     {
         private readonly IPublishEndpoint publishEndpoint;
-        //private readonly IRequestClient<GetPurchaseState> purchaseClient;
+        private readonly IRequestClient<GetPurchaseState> purchaseClient;
 
         public PurchaseController(
-            IPublishEndpoint publishEndpoint)
-            //IRequestClient<GetPurchaseState> purchaseClient)
+            IPublishEndpoint publishEndpoint,
+            IRequestClient<GetPurchaseState> purchaseClient)
         {
             this.publishEndpoint = publishEndpoint;
-            //this.purchaseClient = purchaseClient;
+            this.purchaseClient = purchaseClient;
         }
 
-        // [HttpGet("status/{idempotencyId}")]
-        // public async Task<ActionResult<PurchaseDto>> GetStatusAsync(Guid idempotencyId)
-        // {
-        //     var response = await purchaseClient.GetResponse<PurchaseState>(
-        //         new GetPurchaseState(idempotencyId));
+        [HttpGet("status/{correlationId}")]
+        public async Task<ActionResult<PurchaseDto>> GetStatusAsync(Guid correlationId)
+        {
+            var response = await purchaseClient.GetResponse<PurchaseState>(
+                new GetPurchaseState(correlationId));
 
-        //     var purchaseState = response.Message;
+            var purchaseState = response.Message;
 
-        //     var purchase = new PurchaseDto(
-        //         purchaseState.UserId,
-        //         purchaseState.ItemId,
-        //         purchaseState.PurchaseTotal,
-        //         purchaseState.Quantity,
-        //         purchaseState.CurrentState,
-        //         purchaseState.ErrorMessage,
-        //         purchaseState.Received,
-        //         purchaseState.LastUpdated);
+            var purchase = new PurchaseDto(
+                purchaseState.UserId,
+                purchaseState.ItemId,
+                purchaseState.PurchaseTotal,
+                purchaseState.Quantity,
+                purchaseState.CurrentState,
+                purchaseState.ErrorMessage,
+                purchaseState.Received,
+                purchaseState.LastUpdated);
 
-        //     return Ok(purchase);
-        // }
+            return Ok(purchase);
+        }
 
         [HttpPost]
         public async Task<IActionResult> PostAsync(SubmitPurchaseDto purchase)
@@ -62,11 +62,10 @@ namespace Play.Trading.Service.Controllers
 
             await publishEndpoint.Publish(message);
 
-            return Accepted();
-            // return AcceptedAtAction(
-            //     nameof(GetStatusAsync), 
-            //     new { purchase.IdempotencyId }, 
-            //     new { purchase.IdempotencyId });
+            return AcceptedAtAction(
+                nameof(GetStatusAsync), 
+                new { correlationId }, 
+                new { correlationId });
         }
     }
 }
