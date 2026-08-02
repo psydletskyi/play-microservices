@@ -1,6 +1,8 @@
 using System;
 using Automatonymous;
 using MassTransit;
+using Play.Inventory.Contracts;
+using Play.Trading.Service.Activities;
 using Play.Trading.Service.Contracts;
 
 namespace Play.Trading.Service.StateMachines
@@ -16,7 +18,7 @@ namespace Play.Trading.Service.StateMachines
 
         public Event<PurchaseRequested> PurchaseRequested { get; }
         public Event<GetPurchaseState> GetPurchaseState { get; }
-        // public Event<InventoryItemsGranted> InventoryItemsGranted { get; }
+        public Event<InventoryItemsGranted> InventoryItemsGranted { get; }
         // public Event<GilDebited> GilDebited { get; }
         // public Event<Fault<GrantItems>> GrantItemsFaulted { get; }
         // public Event<Fault<DebitGil>> DebitGilFaulted { get; }
@@ -27,7 +29,7 @@ namespace Play.Trading.Service.StateMachines
             ConfigureEvents();
             ConfigureInitialState();
             ConfigureAny();
-            // ConfigureAccepted();
+            ConfigureAccepted();
             // ConfigureItemsGranted();
             // ConfigureFaulted();
             // ConfigureCompleted();
@@ -38,7 +40,7 @@ namespace Play.Trading.Service.StateMachines
         {
             Event(() => PurchaseRequested);
             Event(() => GetPurchaseState);
-            // Event(() => InventoryItemsGranted);
+            Event(() => InventoryItemsGranted);
             // Event(() => GilDebited);
             // Event(() => GrantItemsFaulted, x => x.CorrelateById(
             //     context => context.Message.Message.CorrelationId));
@@ -58,49 +60,49 @@ namespace Play.Trading.Service.StateMachines
                         context.Instance.Received = DateTimeOffset.UtcNow;
                         context.Instance.LastUpdated = context.Instance.Received;
                     })
-                    // .Activity(x => x.OfType<CalculatePurchaseTotalActivity>())
-                    // .Send(context => new GrantItems(
-                    //     context.Instance.UserId,
-                    //     context.Instance.ItemId,
-                    //     context.Instance.Quantity,
-                    //     context.Instance.CorrelationId))
+                    .Activity(x => x.OfType<CalculatePurchaseTotalActivity>())
+                    .Send(context => new GrantItems(
+                        context.Instance.UserId,
+                        context.Instance.ItemId,
+                        context.Instance.Quantity,
+                        context.Instance.CorrelationId))
                     .TransitionTo(Accepted)
-                    // .Catch<Exception>(ex => ex.
-                    //     Then(context =>
-                    //     {
-                    //         context.Instance.ErrorMessage = context.Exception.Message;
-                    //         context.Instance.LastUpdated = DateTimeOffset.UtcNow;
-                    //     })
-                    //     .TransitionTo(Faulted)
-                    //     .ThenAsync(async context => await hub.SendStatusAsync(context.Instance)))
+                    .Catch<Exception>(ex => ex.
+                        Then(context =>
+                        {
+                            context.Instance.ErrorMessage = context.Exception.Message;
+                            context.Instance.LastUpdated = DateTimeOffset.UtcNow;
+                        })
+                        .TransitionTo(Faulted))
+                        // .ThenAsync(async context => await hub.SendStatusAsync(context.Instance)))
             );
         }
 
-        // private void ConfigureAccepted()
-        // {
-        //     During(Accepted,
-        //         Ignore(PurchaseRequested),
-        //         When(InventoryItemsGranted)
-        //             .Then(context =>
-        //             {
-        //                 context.Instance.LastUpdated = DateTimeOffset.UtcNow;
-        //             })
-        //             .Send(context => new DebitGil(
-        //                 context.Instance.UserId,
-        //                 context.Instance.PurchaseTotal.Value,
-        //                 context.Instance.CorrelationId
-        //             ))
-        //             .TransitionTo(ItemsGranted),
-        //         When(GrantItemsFaulted)
-        //             .Then(context =>
-        //             {
-        //                 context.Instance.ErrorMessage = context.Data.Exceptions[0].Message;
-        //                 context.Instance.LastUpdated = DateTimeOffset.UtcNow;
-        //             })
-        //             .TransitionTo(Faulted)
-        //             .ThenAsync(async context => await hub.SendStatusAsync(context.Instance))
-        //         );
-        // }
+        private void ConfigureAccepted()
+        {
+            During(Accepted,
+                //Ignore(PurchaseRequested),
+                When(InventoryItemsGranted)
+                    .Then(context =>
+                    {
+                        context.Instance.LastUpdated = DateTimeOffset.UtcNow;
+                    })
+                    // .Send(context => new DebitGil(
+                    //     context.Instance.UserId,
+                    //     context.Instance.PurchaseTotal.Value,
+                    //     context.Instance.CorrelationId
+                    // ))
+                    .TransitionTo(ItemsGranted)
+                // When(GrantItemsFaulted)
+                //     .Then(context =>
+                //     {
+                //         context.Instance.ErrorMessage = context.Data.Exceptions[0].Message;
+                //         context.Instance.LastUpdated = DateTimeOffset.UtcNow;
+                //     })
+                //     .TransitionTo(Faulted)
+                //     .ThenAsync(async context => await hub.SendStatusAsync(context.Instance))
+                );
+        }
 
         // private void ConfigureItemsGranted()
         // {
